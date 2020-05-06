@@ -28,20 +28,20 @@ def delete_db(): #удаляет таблицы
 
 def get_students(course_id): #возвращает студентов определенного курса
     # cur.execute(f"select * from Student where id={course_id}")
-    cur.execute(f"""
+    cur.execute("""
                 select s.id, s.name from Student_Course sc 
                 join student s on s.id = sc.student_id 
-                where sc.course_id = {course_id};
-                """)
+                where sc.course_id = %s;
+                """, (course_id, ))
     student_out = cur.fetchall()
     pprint(student_out)
 
 def add_students(course_id, students): # создает студентов и записывает их на курс#
     for id in students:
-        cur.execute(f"""
+        cur.execute("""
             insert into Student(name, gpa, birth)
-            values {students[id]};
-        """)
+            values (%s, %s, %s);
+        """, students[id])
         cur.execute("""
             insert into Student_Course(student_id, course_id)
             values (%s, %s)
@@ -50,20 +50,20 @@ def add_students(course_id, students): # создает студентов и з
 
 def add_student(student): #просто создает студента
     for id in student:
-        cur.execute(f"""
+        cur.execute("""
             insert into Student(name, gpa, birth)
-            values {student[id]};
-        """)
+            values (%s, %s, %s);
+        """, student[id])
 
 def add_courses(course): #создает курсы
     for id in course:
-        cur.execute(f"""
+        cur.execute("""
             insert into Course(id, name)
-            values {course[id]};
-        """)
+            values (%s, %s);
+        """, course[id])
 
 def get_student(student_id): #возвращает студента по его id
-    cur.execute(f"select * from student where id={student_id}")
+    cur.execute("select * from student where id= %s", (student_id, ))
     student_out = cur.fetchall()
     pprint(student_out)
 
